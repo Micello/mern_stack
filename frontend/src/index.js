@@ -1,12 +1,12 @@
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./App.css";
+import "./Briscola.css";
 
-import App2 from "./App2";
+import Briscola from "./Briscola";
 
 const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
-    <App2 />
+    <Briscola />
   </StrictMode>
 );
