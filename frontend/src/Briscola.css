@@ -1,19 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 .Card {
+    @apply bg-[lightgrey] w-[50px] h-[130px] m-5 p-[30px] border-2 border-solid border-[black];
+  }
+  
 
-    background-color: lightgrey;
-    width: 50px;
-    height: 130px;
-    border: 2px solid black;
-    padding: 30px;
-    margin: 20px;
-}
-
-.Board {
-
-    background-color: green;
-    width: 400px;
-    height: 500px;
-    border: 10px solid black;
-    padding: 30px;
-    margin: 20px;
-}
+  .Board {
+    @apply bg-[green] w-[400px] h-[500px] m-5 p-[30px] border-[10px] border-solid border-[black];
+  }
+  
