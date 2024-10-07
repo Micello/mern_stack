@@ -9,6 +9,21 @@
   
 
   .Board {
-    @apply bg-[green] w-[400px] h-[500px] m-5 p-[30px] border-[10px] border-solid border-[black];
+    @apply bg-[green] w-[900px] h-[600px] m-24 p-28 border-[5px] border-solid border-[black];
   }
   
+div {
+  border-style: solid;
+  border-width: 2px;
+  border-color: red;
+}
+
+
+
+html, body, #root {
+  height: 100vh;
+}
+
+.cardli{
+  aspect-ratio: 55/94;
+}
