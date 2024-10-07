@@ -20,7 +20,7 @@ function Card({ id, rank, suit, angle, height, scale }) {
         style={{
           transform: `rotate(${angle}rad) translateY(${height * 10}px) translateX(${angle * -400}px)`,
         }}
-        className={`h-full w-full relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
+        className={`   max-w-[100px] aspect-[55/94] relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -32,12 +32,12 @@ function Card({ id, rank, suit, angle, height, scale }) {
 
 function EnemyHand({ enemyCards }) {
 return (
-    <ul className="flex justify-center items-center w-full h-full ">
+    <ul className="h-2/3 flex justify-center items-center  ">
     {enemyCards.map((i) => {
         const angle = 0.06*(i - ((enemyCards.length+1)/2))
         const height = 0.5*(i - (enemyCards.length+1)/2)*(i-(enemyCards.length+1)/2)
         return (
-        <li className={'cardli w-full h-full '}key={i}>
+        <li className='aspect-[55/94] h-full'key={i}>
             <Card id={i} angle={angle} height={height} scale={1.1} />
         </li>
         );
@@ -49,7 +49,7 @@ return (
   function Hand({ playerHand }) {
     return (
       <ul className="flex justify-center items-center  ">
-        {playerHand.map((card,index) => {
+        {playerHand.map((card) => {
             const angle = 0.06*(card.id - ((playerHand.length+1)/2))
             const height = 0.5*(card.id - (playerHand.length+1)/2)*(card.id-(playerHand.length+1)/2)
             return (
@@ -64,7 +64,7 @@ return (
 
 function Board({}){
     return(
-        <div className={'Board flex justify-center items-center flex-grow flex-shrink'}>
+        <div className={'Board flex justify-center items-center '}>
             <Card  scale={1.1}/>
         </div>
     )
@@ -74,21 +74,26 @@ export default function Briscola(){
 
     
     return(
-        <div className="flex justify-start h-full w-full">
-            <div className={' flex flex-col items-center justify-start  '}>
-                <div className='flex flex-col items-center h-1/2 w-1/2 '>
+        <div className="flex flex-grow justify-start h-full w-full">
+            <div className="leftBar flex-shrink-0 bg-[#cdffcd] w-[300px] h-[600px] m-2 p-2 border-[5px] border-solid border-[black]">
+
+            </div>
+            <div className={' aspect-square flex flex-grow flex-col items-center justify-start  '}>
+                <div className='w-flex w-full flex-grow flex-col items-center '>
                     <p>mano p2</p>
                     <EnemyHand enemyCards={enemyCards}/>
                 </div>
                 
-                    <Board />
+                <Board />
                 
-                <div className='flex flex-col items-center'>
+                <div className='flex w-full flex-grow flex-col items-center'>
                     <p>mano p1</p>
                     <Hand playerHand={playerHand}/>
                 </div>        
             </div>
-            <div>A</div>
+            <div className="leftBar flex-shrink-0 bg-[#cdffcd] w-[300px] h-[600px] m-2 p-2 border-[5px] border-solid border-[black]">
+
+            </div>
         </div>
     )
 };
@@ -96,7 +101,7 @@ export default function Briscola(){
 const playerHand = [
     { id: 1, rank: "A", suit: "Spades" },
     { id: 2, rank: "10", suit: "Hearts" },
-    { id: 3, rank: "K", suit: "Clubs" },
+    { id: 3, rank: "3", suit: "Clubs" },
     { id: 4, rank: "K", suit: "Clubs" },
     { id: 5, rank: "K", suit: "Clubs" },
     { id: 6, rank: "K", suit: "Clubs" }
