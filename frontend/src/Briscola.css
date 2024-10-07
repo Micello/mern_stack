@@ -4,7 +4,7 @@
 
 
 .Card {
-    @apply bg-[lightgrey] w-[50px] h-[130px] m-5 p-[30px] border-2 border-solid border-[black];
+    @apply bg-[lightgrey] w-[10px] h-[130px] m-5 p-[30px] border-2 border-solid border-[black];
   }
   
 
