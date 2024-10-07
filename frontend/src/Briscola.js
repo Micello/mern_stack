@@ -1,4 +1,6 @@
 
+import asso from './Images/asso.jpg'
+import back from './Images/back.jpg'
 
 function Card({ id, rank, suit, angle, height, scale }) {
     const safeAngle = angle || 0; // Default to 0 if angle is undefined
@@ -20,11 +22,11 @@ function Card({ id, rank, suit, angle, height, scale }) {
         style={{
           transform: `rotate(${angle}rad) translateY(${height * 10}px) translateX(${angle * -400}px)`,
         }}
-        className={`   max-w-[100px] aspect-[55/94] relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
+        className={`rounded-md  w-full max-w-[100px] aspect-[3.2/5] relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {rank ? id + ' ' + rank + ' ' + suit : id +  rank + 'altezza  :' + height + 'angolo:  ' + angle}
+        {rank ? <img src={asso} className='rounded-md' /> : <img src={back} className='rounded-md'/>}
       </div>
     );
   }
@@ -32,7 +34,7 @@ function Card({ id, rank, suit, angle, height, scale }) {
 
 function EnemyHand({ enemyCards }) {
 return (
-    <ul className="h-2/3 flex justify-center items-center  ">
+    <ul className="flex justify-center items-center  ">
     {enemyCards.map((i) => {
         const angle = 0.06*(i - ((enemyCards.length+1)/2))
         const height = 0.5*(i - (enemyCards.length+1)/2)*(i-(enemyCards.length+1)/2)
@@ -99,12 +101,12 @@ export default function Briscola(){
 };
 
 const playerHand = [
-    { id: 1, rank: "A", suit: "Spades" },
+    { id: 1, rank: "A", suit: "Spadess" },
     { id: 2, rank: "10", suit: "Hearts" },
-    { id: 3, rank: "3", suit: "Clubs" },
-    { id: 4, rank: "K", suit: "Clubs" },
-    { id: 5, rank: "K", suit: "Clubs" },
-    { id: 6, rank: "K", suit: "Clubs" }
+    { id: 3, rank: "3", suit: "Clubss" },
+    { id: 4, rank: "K", suit: "Clubss" },
+    { id: 5, rank: "K", suit: "Clubss" },
+    { id: 6, rank: "K", suit: "Clubss" }
 
     
 ];
