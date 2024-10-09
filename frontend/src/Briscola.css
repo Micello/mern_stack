@@ -11,7 +11,7 @@
 li{
   border-style: solid;
   border-width: 5px;
-  border-color: blue;
+  border-color: rgb(0, 217, 255);
 }
 
 div {
@@ -21,7 +21,7 @@ div {
 }
 ul {border-style: solid;
 border-width: 5px;
-border-color: green;
+border-color: rgb(27, 11, 243);
 }
 
 html, body, #root {
@@ -30,6 +30,3 @@ html, body, #root {
 
 
 
-ratio{
-  flex-grow: calc(var(--r))
-}
