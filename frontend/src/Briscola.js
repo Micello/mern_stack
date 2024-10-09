@@ -25,40 +25,23 @@ function Card({ id, rank, suit, angle, height, scale }) {
           height: '',
           
         }}
-        className={`rounded-md  relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
+        className={`h-full rounded-md  relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {rank ? <img src={asso} className=' rounded-md' /> : <img src={back} className='  rounded-md'/>}
+        {rank ? <img src={asso} className=' rounded-md h-full' /> : <img src={back} className='h-full  rounded-md'/>}
       </div>
     );
   }
 
-
-function EnemyHand({ enemyCards }) {
-return (
-    <ul className=" flex justify-center ">
-    {enemyCards.map((i) => {
-        const angle = 0.06*(i - ((enemyCards.length+1)/2))
-        const height = 0.5*(i - (enemyCards.length+1)/2)*(i-(enemyCards.length+1)/2)
-        return ( //il rateo non corrisponde al front perchè le immagini sono diverse
-        <li className='aspect-[55/88]'key={i}>
-            <Card id={i} angle={angle} height={height} scale={1.1} />
-        </li>
-        );
-    })}
-    </ul>
-);
-}
-
-  function Hand({ playerHand }) {
+  function Hand({ Hand }) {
     return (
-      <ul className="flex justify-center   ">
-        {playerHand.map((card) => {
-            const angle = 0.06*(card.id - ((playerHand.length+1)/2))
-            const height = 0.5*(card.id - (playerHand.length+1)/2)*(card.id-(playerHand.length+1)/2)
+      <ul className="flex h-full justify-center   ">
+        {Hand.map((card) => {
+            const angle = 0.06*(card.id - ((Hand.length+1)/2))
+            const height = 0.5*(card.id - (Hand.length+1)/2)*(card.id-(Hand.length+1)/2)
             return (
-            <li className='aspect-[55/88]' key={card.id}>
+            <li className='h-full' key={card.id}>
               <Card id={card.id} rank={card.rank} suit={card.suit} angle={angle} height={height} />
             </li>
           );
@@ -69,27 +52,11 @@ return (
 
 function Board({}){
     return(
-        <div className={'border-black Boardgrid grid gap-10 grid-cols-7'}>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
+      <div className="Board h-1/5 flex relative justify-center right-1/4 ">
+        <div className='h-full  z-20'><Card/></div>
+        <div className='absolute h-full right-[-20px] bottom-[-50px] rotate-[35deg] z-10 '><Card/></div>
+      </div>
 
-        </div>
     )
 }
 
@@ -104,27 +71,24 @@ export default function Briscola(){
   
   {/* Gameboard Container */}
   <div
-    className="gameboard-container flex justify-center mt-[10px] ml-[11rem] items-center w-full h-full"
+    className="gameboard-container min-w-[600px] flex justify-center mt-[10px] ml-[11rem] items-center w-full h-full"
     style={{
-      width: 'min(90vh, calc(100vw - 20rem))', // Ensure both width and height are calculated the same way
-      height: 'min(90vh, calc(100vw - 20rem))',
+      width: '90vw', // Ensure both width and height are calculated the same way
+      height: '90vh'
     }}>
     {/* Gameboard */}
     <div
-      className="Gameboard gameboard-square relative flex flex-col items-center justify-between  bg-white border-[5px] border-black"
+      className="Gameboard gameboard-square relative flex flex-col items-center justify-between  bg-green-600 border-[5px] border-black"
       style={{
         width: '100%',  // Gameboard takes up 100% of the container width
         height: '100%', // Gameboard takes up 100% of the container height
       }}>
       <div className="Enemyhand h-1/5 w-full flex justify-center ">
-        <EnemyHand enemyCards={enemyCards} />
+        <Hand Hand={enemyHand} />
       </div>
-      
-      <div className="Board h-3/5 flex flex-col justify-center bg-[green] w-full">
-        <Board />
-      </div>
+      <Board />
       <div className="Playerhand h-1/5 w-full flex  justify-center">
-        <Hand playerHand={playerHand} />
+        <Hand Hand={playerHand} />
       </div>
     </div>
   </div>
@@ -143,7 +107,13 @@ export default function Briscola(){
 };
 
 const playerHand = [
-    { id: 1, rank: "A", suit: "Spadess" },    
+    { id: 1, rank: "A", suit: "Spadess" },
+    { id: 2, rank: "B", suit: "Spadess" },
+    { id: 3, rank: "A", suit: "Spadess" },    
 ];
 
-const enemyCards = [1,2,3,4]
+const enemyHand = [
+  { id: 1, rank: "", suit: "Spadess" },
+  { id: 2, rank: "", suit: "Spadess" },
+  { id: 3, rank: "", suit: "Spadess" },    
+];
