@@ -11,18 +11,46 @@ const enemyHand = [
 { id: 1, scale: 1.1},
 { id: 2, scale: 1.1},
 { id: 3, scale: 1.1},
+{ id: 4, scale: 1.1},
+{ id: 5, scale: 1.1},
 ];
 
 
 function Board({}){
     return(
-      <div className="Board h-1/5 flex relative justify-center right-1/4 ">
-        <div className='h-full  z-20'><Card scale={1.1}/></div>
-        <div className='absolute h-full right-[-20px] bottom-[-50px] rotate-[35deg] z-10 '><Card/></div>
-      </div>
 
+      
+
+
+<div className="h-full w-full grid grid-cols-5 grid-rows-6 gap-4">
+    <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Slot /></div>
+    <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Slot /></div>
+    <div className="relative row-span-2 col-start-2 row-start-3 flex justify-end z-20">
+      <div className="h-full aspect-[55/88] z-20"><Card  /></div>
+      <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card rank={"spades"} /></div>
+    </div>
+</div>
+    
+    
+    
+
+    
+    
+    
+    
     )
 }
+
+function Slot({}){
+  return(
+    <div className='h-full aspect-[55/88]'></div>
+  )
+
+
+}
+
+
+
 
 export default function Briscola(){
 
@@ -37,8 +65,8 @@ export default function Briscola(){
   <div
     className="gameboard-container min-w-[600px] flex justify-center mt-[10px] ml-[11rem] items-center w-full h-full"
     style={{
-      width: '90vw', // Ensure both width and height are calculated the same way
-      height: '90vh'
+      width: '100vw', // Ensure both width and height are calculated the same way
+      height: '100vh'
     }}>
     {/* Gameboard */}
     <div
