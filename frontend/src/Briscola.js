@@ -2,9 +2,9 @@ import {Hand, OpponentHand} from './Hand';
 import Card from './Card';
 import {useState } from 'react';
 const playerCards = [
-  { id: 1, rank: "A", suit: "Spadess", location: 0 },
-  { id: 2, rank: "B", suit: "Spadess", location: 0 },
-  { id: 3, rank: "A", suit: "Spadess", location: 0 },    
+  { id: 1, rank: "A", suit: "bastoni", location: 0 },
+  { id: 2, rank: "10", suit: "coppe", location: 0 },
+  { id: 3, rank: "7", suit: "denari", location: 0 },    
 ];
 
 

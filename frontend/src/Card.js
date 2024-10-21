@@ -16,21 +16,43 @@ export default function Card({ id, rank, suit, angle, location, height, scale, o
             (e) => {e.currentTarget.style.transform = `scale(1) rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -900}px) `};
         
             
-    return (
-      <div
-        style={{
-          transform: `rotate(${angle}rad) translateY(${height * 10}px) translateX(${angle * -900}px)`, //posizione iniziale dopo f5
-          width: '', // Ensure both width and height are calculated the same way
-          height: '',
-          
-        }}
-        className={`max-w-[125px] max-h-[200px] h-full rounded-md  relative  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={onClick}
-      >
-        {location == 0 || location == 2 ? <img src={spritesheet} className='card rounded-md h-full' /> : rank=="slot" ? <img src={back} className='opacity-5'/> : <img src={back} className='h-full  rounded-md'/>}
-        
+            {location == 0 || location == 2 ? <img src={spritesheet} className='card rounded-md h-full' /> : rank=="slot" ? <img src={back} className='opacity-5'/> : <img src={back} className='h-full  rounded-md'/>}
+     
+            // Map suits and ranks to their positions in the spritesheet grid
+     const suits = ['denari', 'coppe', 'bastoni', 'spade']; // Example suit order
+     const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10']; // Example rank order
+     
+     // Find the index of the suit and rank
+     const suitIndex = suits.indexOf(suit);
+     const rankIndex = ranks.indexOf(rank);
+ 
+     // Calculate the size of each card in the sprite sheet (e.g., if it's a grid of 13x4 cards)
+     const cardWidth = 80; // Replace with actual width of one card in the spritesheet
+     const cardHeight = 137; // Replace with actual height of one card in the spritesheet
+ 
+     // Calculate background position to show the correct card
+     const backgroundPositionX = -rankIndex * cardWidth ;
+     const backgroundPositionY = -suitIndex * cardHeight;
+ 
+     return (
+       <div
+         style={{
+           transform: `rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${angle * -900}px)`,
+           width: '80px', // Assuming each card is 125px wide, adjust if needed
+           height: '137px', // Assuming each card is 200px tall, adjust if needed
+           backgroundImage: location === 0 || location === 2 ? `url(${spritesheet})` : 'none',
+           backgroundPosition: `${backgroundPositionX}px ${backgroundPositionY}px`,
+           backgroundSize: `${cardWidth * 10}px ${cardHeight * 4}px`, // This ensures the whole spritesheet is scaled correctly
+         }}
+         className={`max-w-[80px] max-h-[137px] h-full rounded-md relative box-border border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
+         onMouseEnter={handleMouseEnter}
+         onMouseLeave={handleMouseLeave}
+         onClick={onClick}
+       >
+         {location !== 0 && location !== 2 ? 
+          rank === "slot" ? <img src={back} className='opacity-5'/> : <img src={back} className='h-full  rounded-md'/>
+          : null
+        }    
       </div>
     );
   }
