@@ -1,16 +1,16 @@
-import asso from './Images/asso.jpg'
+import spritesheet from './Images/spritesheet.jpg'
 import back from './Images/back.jpg'
 
-export default function Card({ id, rank, suit, angle, height, scale, onClick }) {
+export default function Card({ id, rank, suit, angle, location, height, scale, onClick }) {  //location: 0 myhand, 1 opphand, 2 board, 3 other
     const safeAngle = angle || 0; // Default to 0 if angle is undefined
     const safeHeight = height || 0; // Default to 0 if height is undefined
     const safeScale = scale || 1; // Default to 0 if height is undefined
-    const handleMouseEnter = rank && rank !== "slot" ? (e) => { e.currentTarget.style.transform = `rotate(${safeAngle}rad) translateY(${safeHeight * 10 - 40}px) translateX(${safeAngle * -900}px)`} : 
+    const handleMouseEnter = location == 0 ? (e) => { e.currentTarget.style.transform = `rotate(${safeAngle}rad) translateY(${safeHeight * 10 - 40}px) translateX(${safeAngle * -900}px)`} : 
         (e) => {//se non ha un seme (non è nella mia mano)
             
             e.currentTarget.style.transform = `scale(${safeScale}) rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -900}px) `};
     
-    const handleMouseLeave = rank ? (e) => {
+    const handleMouseLeave = location == 0 ? (e) => {
                 e.currentTarget.style.transform = `rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -900}px) scale(${safeScale})`
             } :
             (e) => {e.currentTarget.style.transform = `scale(1) rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -900}px) `};
@@ -29,7 +29,7 @@ export default function Card({ id, rank, suit, angle, height, scale, onClick }) 
         onMouseLeave={handleMouseLeave}
         onClick={onClick}
       >
-        {rank && rank !== "slot" ? <img src={asso} className=' rounded-md h-full' /> : rank=="slot" ? <img src={back} className='opacity-5'/> : <img src={back} className='h-full  rounded-md'/>}
+        {location == 0 || location == 2 ? <img src={spritesheet} className='card rounded-md h-full' /> : rank=="slot" ? <img src={back} className='opacity-5'/> : <img src={back} className='h-full  rounded-md'/>}
         
       </div>
     );

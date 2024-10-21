@@ -1,17 +1,12 @@
-import Hand from './Hand';
+import {Hand, OpponentHand} from './Hand';
 import Card from './Card';
 import {useState } from 'react';
 const playerCards = [
-  { id: 1, rank: "A", suit: "Spadess" },
-  { id: 2, rank: "B", suit: "Spadess" },
-  { id: 3, rank: "A", suit: "Spadess" },    
+  { id: 1, rank: "A", suit: "Spadess", location: 0 },
+  { id: 2, rank: "B", suit: "Spadess", location: 0 },
+  { id: 3, rank: "A", suit: "Spadess", location: 0 },    
 ];
 
-const enemyHand = [
-{ id: 1, scale: 1.1},
-{ id: 2, scale: 1.1},
-{ id: 3, scale: 1.1}
-];
 
 const boardCards = [
   { id: 0, rank: "slot"},
@@ -23,32 +18,21 @@ function Board({briscolaSuit, boardCards}){
   return(
 
    <div className="h-full w-full grid grid-cols-5 grid-rows-6 gap-4">
-        <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card rank={boardCards[0].rank} /></div>
-        <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card rank={boardCards[1].rank}/></div>
+        <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card id={boardCards[1].id} rank={boardCards[1].rank} suit={boardCards[1].suit} location={boardCards[1].location}  /></div>
+        <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card id={boardCards[0].id} rank={boardCards[0].rank} suit={boardCards[0].suit} location={boardCards[0].location}/></div>
         <div className="relative row-span-2 col-start-2 row-start-3 flex justify-end z-20">
           <div className="h-full aspect-[55/88] z-20"><Card  /></div>
-          <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card rank={/*briscolaSuit.rank ... */"spades"} /></div>
+          <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card location={2} /></div>
         </div>
     </div>
     
     )
 }
 
-function Slot({}){
-  return(
-    <div className='h-full aspect-[55/88]'></div>
-  )
-
-
-}
-
-
-
-
 export default function Briscola(){
   const [playerHand, setPlayerHand] = useState(playerCards);
   const [board, setBoard] = useState(boardCards);
-  const [opponentHandSize, setOpponentHandSize] = useState(enemyHand);
+  const [opponentHandSize, setOpponentHandSize] = useState(3);
   const [briscolaSuit, setBriscolaSuit] = useState({ id: 1, rank: "A", suit: "Spadess" });
   const [playerScore, setPlayerScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
@@ -61,11 +45,8 @@ export default function Briscola(){
     const newHand = playerHand.filter(c => c.id !== card.id); //card è la carta cliccata
     setPlayerHand(newHand);
 
-    // Add the card to the board (if you want to)
-    setBoard((prevBoard) => [
-      ...prevBoard, // existing board cards
-      { id: card.id, rank: card.rank, suit: card.suit } // newly clicked card
-    ]);
+    const newBoard = [{ id: card.id, rank: card.rank, suit: card.suit, location: 2}, board[1]];
+    setBoard(newBoard);
   };
 
   return(
@@ -89,7 +70,7 @@ export default function Briscola(){
         height: '100%', // Gameboard takes up 100% of the container height
       }}>
       <div className="Enemyhand h-1/5 w-full flex justify-between ">
-        <Hand Hand={opponentHandSize} playerScore={opponentScore} />
+        <OpponentHand HandSize={opponentHandSize} playerScore={opponentScore} />
       </div>
       <Board boardCards={board} briscolaSuit={briscolaSuit} />
       <div className="Playerhand h-1/5 w-full flex  justify-between">
