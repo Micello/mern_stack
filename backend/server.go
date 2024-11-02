@@ -42,6 +42,7 @@ type Player struct {
 	Name  string
 	Hand  []Card
 	Score int
+	Bot   bool
 }
 
 type Game struct {
@@ -52,13 +53,13 @@ type Game struct {
 	Turn         int
 }
 
-func NewGame(playerNames []string) *Game {
+func NewGame(playerNames []string, isBot []bool) *Game {
 	deck := NewDeck()
 	deck.Shuffle()
 
 	players := []Player{}
-	for _, name := range playerNames {
-		players = append(players, Player{Name: name})
+	for i, name := range playerNames {
+		players = append(players, Player{Name: name, Bot: isBot[i]})
 	}
 
 	for i := 0; i < len(players); i++ {
@@ -75,23 +76,6 @@ func NewGame(playerNames []string) *Game {
 		Briscola: briscola,
 		Turn:     turn,
 	}
-}
-
-func (g *Game) PlayRound(picks []int) int {
-	g.CurrentTrick = []Card{}
-
-	for i := range g.Players {
-		iturn := (i + g.Turn) % len(g.Players)
-		card := g.Players[iturn].Hand[picks[i]] //NOTA: l'indice di picks non indica il giocatore ma il turno
-		g.Players[iturn].Hand = append(g.Players[iturn].Hand[:picks[i]], g.Players[iturn].Hand[picks[i]+1:]...)
-		g.CurrentTrick = append(g.CurrentTrick, card) //NOTA: l'indice di CurrentTrick non indica il giocatore
-		fmt.Printf("%s gioca il %v di %v\n", g.Players[iturn].Name, card.Value, card.Suit)
-	}
-
-	winnerIndex := g.DetermineTrickWinner()
-	fmt.Printf("%s vince la mano!\n", g.Players[winnerIndex].Name)
-	g.Turn = winnerIndex
-	return winnerIndex
 }
 
 func (g *Game) DetermineTrickWinner() int {
@@ -157,67 +141,118 @@ func (g *Game) Draw() {
 	g.CurrentTrick = nil
 }
 
-func main() {
-	game := NewGame([]string{"Alice", "Bob"})
-	fmt.Printf("La briscola è: %v\n\n", game.Briscola)
-	fmt.Printf("Mani iniziali: %v \n\n", game.Players)
-	var winner int
+func setupPlayers() ([]string, []bool) {
+	var playerCount int
+	var gameMode bool
+	fmt.Print("CPU o giocatore?  ") // false = CPU
+	fmt.Scan(&gameMode)
+	fmt.Print("Seleziona numero giocatori (2 o 4)") // no error handling here
+	fmt.Scan(&playerCount)
+
+	playerNames := []string{}
+	isBot := []bool{}
+	if !gameMode {
+		var name string
+		fmt.Print("Nome del giocatore 1: ")
+		fmt.Scan(&name)
+		playerNames = append(playerNames, name)
+		isBot = append(isBot, false)
+		for i := 1; i < playerCount; i++ {
+			botName := fmt.Sprintf("bot%d", i)
+			playerNames = append(playerNames, botName)
+			isBot = append(isBot, true)
+		}
+	} else {
+		for i := 0; i < playerCount; i++ {
+			var name string
+			fmt.Printf("Nome del giocatore %d: ", i+1)
+			fmt.Scan(&name)
+			playerNames = append(playerNames, name)
+			isBot = append(isBot, false)
+		}
+	}
+	return playerNames, isBot
+}
+
+func playRound(game *Game) {
 	picks := []int{}
+	fmt.Printf("TURNO di: %d\n", game.Turn)
+	fmt.Printf("Briscola: %v\n", game.Briscola.Suit)
+	for i := range game.Players {
+		iturn := (i + game.Turn) % len(game.Players)
+		pick := chooseCard(game.Players[iturn])
+		picks = append(picks, pick)
+	}
+	winner := game.PlayRound(picks)
+	game.ScoreTrick(winner)
+}
+
+func (g *Game) PlayRound(picks []int) int {
+	g.CurrentTrick = []Card{}
+
+	for i := range g.Players {
+		iturn := (i + g.Turn) % len(g.Players)
+		card := g.Players[iturn].Hand[picks[i]] //NOTA: l'indice di picks non indica il giocatore ma il turno
+		g.Players[iturn].Hand = append(g.Players[iturn].Hand[:picks[i]], g.Players[iturn].Hand[picks[i]+1:]...)
+		g.CurrentTrick = append(g.CurrentTrick, card) //NOTA: l'indice di CurrentTrick non indica il giocatore
+	}
+
+	winnerIndex := g.DetermineTrickWinner()
+	fmt.Printf("%s vince la mano!\n", g.Players[winnerIndex].Name)
+	g.Turn = winnerIndex
+	return winnerIndex
+}
+func chooseCard(player Player) int {
 	var pick int
-	for len(game.Deck) > 0 {
-		for i := range game.Players {
-			iturn := (i + game.Turn) % len(game.Players)
-
-			// Display the player's hand and prompt for input
-			fmt.Printf("%v\n", game.Players[iturn].Hand)
-			fmt.Printf("%s, scegli una carta (0, 1, or 2): ", game.Players[iturn].Name)
-
-			// Input validation loop
-			for {
-				_, err := fmt.Scan(&pick)
-				if err == nil && (pick == 0 || pick == 1 || pick == 2) {
-					break // Valid input, exit the loop
-				} else {
-					fmt.Println("Input non valido. Per favore inserisci 0, 1, o 2.")
-				}
+	if player.Bot {
+		rand.Seed(time.Now().UnixNano())
+		pick = rand.Intn(len(player.Hand))
+	} else {
+		fmt.Printf("%v\n", player.Hand)
+		fmt.Printf("%s, scegli una carta (0, 1, or 2): \n", player.Name)
+		for {
+			_, err := fmt.Scan(&pick)
+			if err == nil && pick >= 0 && pick < len(player.Hand) {
+				break
+			} else {
+				fmt.Println("Input non valido. Per favore inserisci un valore corretto.")
 			}
-
-			// Append the valid pick to picks slice
-			picks = append(picks, pick)
 		}
-		winner = game.PlayRound(picks)
-		picks = nil
-		game.ScoreTrick(winner)
-		game.Draw()
-		fmt.Printf("%s: %v %d punti\n", game.Players[0].Name, game.Players[0].Hand, game.Players[0].Score)
-		fmt.Printf("%s: %v %d punti\n\n", game.Players[1].Name, game.Players[1].Hand, game.Players[1].Score)
 	}
-	for len(game.Players[0].Hand) != 0 {
-		for i := range game.Players {
-			iturn := (i + game.Turn) % len(game.Players)
+	time.Sleep(500 * time.Millisecond)
+	fmt.Printf("%s gioca %v\n", player.Name, player.Hand[pick])
+	return pick
+}
 
-			fmt.Printf("%v\n", game.Players[iturn].Hand)
-			fmt.Printf("%s, scegli una carta (0, 1, or 2): ", game.Players[iturn].Name)
-
-			for {
-				_, err := fmt.Scan(&pick)
-				if err == nil && (pick < len(game.Players[0].Hand)) {
-					break // Valid input, exit the loop
-				} else {
-					fmt.Println("Input non valido. Hai un numero di carte in mano pari a", len(game.Players[0].Hand))
-				}
-			}
-
-			picks = append(picks, pick)
+func displayScores(game *Game) {
+	if len(game.Players) == 2 {
+		for _, player := range game.Players {
+			fmt.Printf("%s: %d punti\n", player.Name, player.Score)
 		}
-		winner = game.PlayRound(picks)
-		picks = nil
-		game.ScoreTrick(winner)
-		fmt.Printf("%s: %v %d punti\n", game.Players[0].Name, game.Players[0].Hand, game.Players[0].Score)
-		fmt.Printf("%s: %v %d punti\n\n", game.Players[1].Name, game.Players[1].Hand, game.Players[1].Score)
+	} else {
+		fmt.Printf("Team 1: %d punti\n", game.Players[0].Score+game.Players[2].Score)
+		fmt.Printf("Team 2: %d punti\n", game.Players[1].Score+game.Players[3].Score)
 	}
-	fmt.Println("Final Scores:")
+}
+func displayHands(game *Game) {
 	for _, player := range game.Players {
-		fmt.Printf("%s: %d\n", player.Name, player.Score)
+		fmt.Printf("mano di %s: %v \n", player.Name, player.Hand)
+	}
+}
+func main() {
+	playerNames, isBot := setupPlayers() // Step 1: Set up players
+	game := NewGame(playerNames, isBot)
+	fmt.Printf("La briscola è: %v\n\n", game.Briscola)
+	displayHands(game)
+	for len(game.Deck) > 0 {
+		playRound(game) // Step 3: Play a round
+		game.Draw()
+		displayScores(game)
+	}
+
+	// Play remaining cards in hands after deck is exhausted
+	for len(game.Players[0].Hand) > 0 {
+		playRound(game)
+		displayScores(game)
 	}
 }
