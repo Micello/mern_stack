@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
+	"net/http"
 	"time"
 )
 
@@ -18,6 +20,13 @@ const (
 type Card struct {
 	Value int
 	Suit  Suit
+}
+
+type Message struct {
+	Action string `json:"action"`
+	Value  int    `json:"data"`
+	Suit   Suit   `json:"suit"`
+	Player string `json:"player"`
 }
 
 type Deck []Card
@@ -130,6 +139,14 @@ func (g *Game) ScoreTrick() {
 }
 
 func main() {
+	http.HandleFunc("/ws", handleConnections) //http crea una goroutine
+	go handleMessages()
+	port := ":8080"
+	fmt.Printf("Server starting on port %s...\n", port)
+	err := http.ListenAndServe(port, nil) //avvio del server: ogni connessione in arrivo viene avviata in una goroutine separata DI DEFAULT e quindi al suo interno handleConnections
+	if err != nil {
+		log.Fatal("Server error:", err)
+	}
 	game := NewGame([]string{"Alice", "Bob"})
 
 	for len(game.Deck) > 0 {
