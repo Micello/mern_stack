@@ -1,0 +1,11 @@
+each time a client connects to /ws, a new instance of handleconnections is executed for that client, running in its own goroutine.
+Each instance of handleConnections manages the WebSocket connection for a single client, receiving and sending messages independently of other client connections.
+Each handleConnections instance can push messages to the broadcast channel (broadcast <- msg), which is handled centrally by the single handleMessages goroutine.
+This design allows multiple handleConnections instances to run concurrently (one for each connected client), all interacting with the broadcast channel without blocking each other.
+
+
+handleMessages goroutine continuously loops, waiting for incoming messages on the broadcast channel.
+since it’s the only receiver on broadcast, handlemessages handles messages in the order they arrive. no two handlemessages goroutines compete to receive from broadcast.
+this ensures that the broadcast and processing logic is sequential and centralized, making it simpler to manage.
+
+

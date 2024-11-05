@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
+	"net/http"
 	"time"
 )
 
@@ -18,6 +20,13 @@ const (
 type Card struct {
 	Value int
 	Suit  Suit
+}
+
+type Message struct {
+	Action string `json:"action"`
+	Value  int    `json:"data"`
+	Suit   Suit   `json:"suit"`
+	Player string `json:"player"`
 }
 
 type Deck []Card
@@ -133,6 +142,8 @@ func (g *Game) ScoreTrick(i int) {
 	g.CurrentTrick = nil
 }
 
+
+
 func (g *Game) Draw() {
 	for i := range g.Players {
 		g.Players[i].Hand = append(g.Players[i].Hand, g.Deck[0])
@@ -140,6 +151,7 @@ func (g *Game) Draw() {
 	}
 	g.CurrentTrick = nil
 }
+
 
 func setupPlayers() ([]string, []bool) {
 	var playerCount int
@@ -240,8 +252,16 @@ func displayHands(game *Game) {
 	}
 }
 func main() {
-	playerNames, isBot := setupPlayers() // Step 1: Set up players
-	game := NewGame(playerNames, isBot)
+	func main() {
+	http.HandleFunc("/ws", handleConnections) //http crea una goroutine
+	go handleMessages()
+	port := ":8080"
+	fmt.Printf("Server starting on port %s...\n", port)
+	err := http.ListenAndServe(port, nil) //avvio del server: ogni connessione in arrivo viene avviata in una goroutine separata DI DEFAULT e quindi al suo interno handleConnections
+	if err != nil {
+		log.Fatal("Server error:", err)
+	}
+	game := NewGame([]string{"Alice", "Bob"})
 	fmt.Printf("La briscola è: %v\n\n", game.Briscola)
 	displayHands(game)
 	for len(game.Deck) > 0 {
