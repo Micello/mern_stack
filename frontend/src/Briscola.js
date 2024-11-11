@@ -1,126 +1,81 @@
+import {Hand, OpponentHand} from './Hand';
+import Card from './Card';
+import {useState } from 'react';
 
-import asso from './Images/asso.jpg'
-import back from './Images/back.jpg'
-
-function Card({ id, rank, suit, angle, height, scale }) {
-    const safeAngle = angle || 0; // Default to 0 if angle is undefined
-    const safeHeight = height || 0; // Default to 0 if height is undefined
-    const safeScale = scale || 1; // Default to 0 if height is undefined
-    const handleMouseEnter = rank ? (e) => { e.currentTarget.style.transform = `rotate(${safeAngle}rad) translateY(${safeHeight * 10 - 40}px) translateX(${safeAngle * -400}px)`} : 
-        (e) => {//se non ha un seme (non è nella mia mano)
-            
-            e.currentTarget.style.transform = `scale(${safeScale}) rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -400}px) `};
-    
-    const handleMouseLeave = rank ? (e) => {
-                e.currentTarget.style.transform = `rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -400}px) scale(${safeScale})`
-            } :
-            (e) => {e.currentTarget.style.transform = `scale(1) rotate(${safeAngle}rad) translateY(${safeHeight * 10}px) translateX(${safeAngle * -400}px) `};
-        
-  
-    return (
-      <div
-        style={{
-          transform: `rotate(${angle}rad) translateY(${height * 10}px) translateX(${angle * -200}px)`,
-          width: '', // Ensure both width and height are calculated the same way
-          height: '',
-          
-        }}
-        className={`rounded-md   relative focus:ring-violet-300 active:bg-violet-700 bg-[lightgrey] hover:bg-gray-50  box-border   border-2 border-solid border-[black] transition-transform duration-300 ease-in-out`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {rank ? <img src={asso} className=' rounded-md' /> : <img src={back} className='  rounded-md'/>}
-      </div>
-    );
-  }
+const playerCards = [
+  { id: 1, rank: "A", suit: "bastoni", location: 0 },
+  { id: 2, rank: "10", suit: "coppe", location: 0 },
+  { id: 3, rank: "7", suit: "denari", location: 0 },    
+];
 
 
-function EnemyHand({ enemyCards }) {
-return (
-    <ul className=" flex justify-center items-center pl-[20%] pr-[20%] ">
-    {enemyCards.map((i) => {
-        const angle = 0.06*(i - ((enemyCards.length+1)/2))
-        const height = 0.5*(i - (enemyCards.length+1)/2)*(i-(enemyCards.length+1)/2)
-        return (
-        <li className='  'key={i}>
-            <Card id={i} angle={angle} height={height} scale={1.1} />
-        </li>
-        );
-    })}
-    </ul>
-);
-}
+const boardCards = [
+  { id: 0, rank: "slot"},
+  { id: 1, rank: "slot"},   
+  ];
 
-  function Hand({ playerHand }) {
-    return (
-      <ul className="flex  justify-center items-center   ">
-        {playerHand.map((card) => {
-            const angle = 0.06*(card.id - ((playerHand.length+1)/2))
-            const height = 0.5*(card.id - (playerHand.length+1)/2)*(card.id-(playerHand.length+1)/2)
-            return (
-            <li className='w-1/10' key={card.id}>
-              <Card id={card.id} rank={card.rank} suit={card.suit} angle={angle} height={height} />
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
 
-function Board({}){
-    return(
-        <div className={'Boardgrid grid gap-5 grid-cols-7 m-5 justify-center items-center '}>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
-            <Card scale={1.1}/>
+function Board({briscolaSuit, boardCards}){
+  return(
 
+   <div className="h-full w-full grid grid-cols-5 grid-rows-6 gap-4">
+        <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card id={boardCards[1].id} rank={boardCards[1].rank} suit={boardCards[1].suit} location={boardCards[1].location}  /></div>
+        <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card id={boardCards[0].id} rank={boardCards[0].rank} suit={boardCards[0].suit} location={boardCards[0].location}/></div>
+        <div className="relative row-span-2 col-start-2 row-start-3 flex justify-end z-20">
+          <div className="h-full aspect-[55/88] z-20"><Card  /></div>
+          <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card location={2} /></div>
         </div>
+    </div>
+    
     )
 }
 
 export default function Briscola(){
+  const [playerHand, setPlayerHand] = useState(playerCards);
+  const [board, setBoard] = useState(boardCards);
+  const [opponentHandSize, setOpponentHandSize] = useState(3);
+  const [briscolaSuit, setBriscolaSuit] = useState({ id: 1, rank: "A", suit: "Spadess" });
+  const [playerScore, setPlayerScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
+  const [turn, setTurn] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  
+  const handleCardClick = (card) => {
+    if (turn%2==1) {return}
+    console.log("card clicked")
+    const newHand = playerHand.filter(c => c.id !== card.id); //card è la carta cliccata
+    setPlayerHand(newHand);
 
-    
-    return(
-<div className="Outside relative flex justify-start items-start min-h-screen">
+    const newBoard = [{ id: card.id, rank: card.rank, suit: card.suit, location: 2}, board[1]];
+    setBoard(newBoard);
+  };
+
+  return(
+  <div className="Outside relative flex justify-start items-start min-h-screen">
   {/* Left Bar */}
   <div className="leftBar absolute left-0 bg-[#cdffcd] w-[10rem] h-full m-2 p-2 border-[5px] border-solid border-[black]"></div>
 
   
   {/* Gameboard Container */}
   <div
-    className="gameboard-container flex justify-center mt-[10px] ml-[11rem] items-center w-full h-full"
+    className="gameboard-container min-w-[600px] flex justify-center mt-[10px] ml-[11rem] items-center w-full h-full"
     style={{
-      width: 'min(90vh, calc(100vw - 20rem))', // Ensure both width and height are calculated the same way
-      height: 'min(90vh, calc(100vw - 20rem))',
+      width: '100vw', // Ensure both width and height are calculated the same way
+      height: '100vh'
     }}>
     {/* Gameboard */}
     <div
-      className="Gameboard gameboard-square relative flex flex-col items-center justify-between  bg-white border-[5px] border-black"
+      className="Gameboard gameboard-square relative flex flex-col items-center justify-between  bg-green-600 border-[5px] border-black"
       style={{
         width: '100%',  // Gameboard takes up 100% of the container width
         height: '100%', // Gameboard takes up 100% of the container height
       }}>
-      <div className="Enemyhand w-full flex justify-center ">
-        <EnemyHand enemyCards={enemyCards} />
+      <div className="Enemyhand h-1/5 w-full flex justify-between ">
+        <OpponentHand HandSize={opponentHandSize} playerScore={opponentScore} />
       </div>
-      
-      <div className="Board m-5 bg-[green] w-full">
-        <Board />
-      </div>
-      <div className="Playerhand w-full flex-col">
-        <p>mano p1</p>
-        <Hand playerHand={playerHand} />
+      <Board boardCards={board} briscolaSuit={briscolaSuit} />
+      <div className="Playerhand h-1/5 w-full flex  justify-between">
+        <Hand Hand={playerHand} playerScore={playerScore} onCardClick={handleCardClick} />
       </div>
     </div>
   </div>
@@ -138,15 +93,3 @@ export default function Briscola(){
     )
 };
 
-const playerHand = [
-    { id: 1, rank: "A", suit: "Spadess" },
-    { id: 2, rank: "10", suit: "Hearts" },
-    { id: 3, rank: "3", suit: "Clubss" },
-    { id: 4, rank: "K", suit: "Clubss" },
-    { id: 5, rank: "K", suit: "Clubss" },
-    { id: 6, rank: "K", suit: "Clubss" }
-
-    
-];
-
-const enemyCards = [1,2,3]
