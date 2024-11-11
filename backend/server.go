@@ -30,7 +30,7 @@ type Card struct {
 type Message struct {
 	Action   string `json:"action"`
 	Value    int    `json:"value"`
-	Player   string `json:"layer"`
+	Player   string `json:"player"`
 	ClientID string `json:"clientId"`
 }
 
@@ -109,6 +109,7 @@ func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
 }
 
 func (g *Game) DetermineTrickWinner() int {
+	fmt.Printf("Il trick dentro trickwinner è %v", g.CurrentTrick)
 	winningCard := g.CurrentTrick[0]
 	winnerIndex := 0
 	fmt.Printf("\nTrick: %v -> ", g.CurrentTrick)
@@ -136,6 +137,7 @@ func (g *Game) DetermineTrickWinner() int {
 			winnerIndex = i
 		}
 	}
+	fmt.Printf("winnerIndex: %v, g.Turn: %d, len(g.Players): %d\n", winnerIndex, g.Turn, len(g.Players))
 	return (winnerIndex + g.Turn) % len(g.Players)
 }
 
@@ -281,7 +283,7 @@ func (c *Clients) SafeAdd(ws *websocket.Conn) string {
 
 func (games GameCollection) PrintGames() {
 	for id, game := range games {
-		fmt.Printf("PrintGames()\nGame ID: %d, Game Details:  \n Deck cards number:%+v\n Hands: %v \n", id, len(game.Deck), game.Players)
+		fmt.Printf("PrintGames()\nGame ID: %d, Game Details: Briscola: %v \n Deck cards number:%+v\n Hands: %v \n, Trick: %v", id, game.Briscola, len(game.Deck), game.Players, game.CurrentTrick)
 	}
 }
 

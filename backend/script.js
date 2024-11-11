@@ -23,9 +23,9 @@ ws.onerror = function (error) {
 
 
 /*
-ws.send(JSON.stringify({ action: "pick_card", value: 2, suit: "Spade", player:"simo"}));
+ws.send(JSON.stringify({ action: "pick_card", value: 2, player:"simo", clientId:"7799"}));
 
-ws.send(JSON.stringify({ action: "startGame", value: 2, suit: "cpu", player:"simo", clientId:"7799"}));
+ws.send(JSON.stringify({ action: "startGame", value: 0, player:"simo", clientId:"7799"}));
 
 
 */
