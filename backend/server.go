@@ -2,10 +2,15 @@ package main
 
 import (
 	"fmt"
+	//	"github.com/gorilla/websocket"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
+	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type Suit string
@@ -23,10 +28,10 @@ type Card struct {
 }
 
 type Message struct {
-	Action string `json:"action"`
-	Value  int    `json:"data"`
-	Suit   Suit   `json:"suit"`
-	Player string `json:"player"`
+	Action   string `json:"action"`
+	Value    int    `json:"value"`
+	Player   string `json:"layer"`
+	ClientID string `json:"clientId"`
 }
 
 type Deck []Card
@@ -55,6 +60,7 @@ type Player struct {
 }
 
 type Game struct {
+	Id           int
 	Deck         Deck
 	Players      []Player
 	Briscola     Card
@@ -62,7 +68,21 @@ type Game struct {
 	Turn         int
 }
 
-func NewGame(playerNames []string, isBot []bool) *Game {
+type GameCollection map[int]*Game
+
+type ClientInfo struct {
+	Conn   *websocket.Conn
+	GameId int
+}
+
+type Clients struct {
+	mu      sync.Mutex
+	clients map[string]ClientInfo //Per cercare e collegare client(s) e game.
+}
+
+func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
+	*gc++
+	id := *gc //NOTA: se più di un HandleMesages goroutine viene eseguita, necessita mutex.
 	deck := NewDeck()
 	deck.Shuffle()
 
@@ -80,6 +100,7 @@ func NewGame(playerNames []string, isBot []bool) *Game {
 	turn := 0
 
 	return &Game{
+		Id:       id,
 		Deck:     deck,
 		Players:  players,
 		Briscola: briscola,
@@ -142,8 +163,6 @@ func (g *Game) ScoreTrick(i int) {
 	g.CurrentTrick = nil
 }
 
-
-
 func (g *Game) Draw() {
 	for i := range g.Players {
 		g.Players[i].Hand = append(g.Players[i].Hand, g.Deck[0])
@@ -151,7 +170,6 @@ func (g *Game) Draw() {
 	}
 	g.CurrentTrick = nil
 }
-
 
 func setupPlayers() ([]string, []bool) {
 	var playerCount int
@@ -251,28 +269,70 @@ func displayHands(game *Game) {
 		fmt.Printf("mano di %s: %v \n", player.Name, player.Hand)
 	}
 }
+
+func (c *Clients) SafeAdd(ws *websocket.Conn) string {
+	c.mu.Lock()                                // Lock to ensure thread-safe access to the map
+	defer c.mu.Unlock()                        // Ensure unlocking happens after the modification
+	clientID := strconv.Itoa(rand.Intn(10000)) // Inside the lock, check if ID exists already, or generate a new one (if needed)
+	c.clients[clientID] = ClientInfo{Conn: ws, GameId: -1}
+	log.Printf("SafeAdd: Added client %s to the map %v", clientID, c.clients)
+	return clientID
+}
+
+func (games GameCollection) PrintGames() {
+	for id, game := range games {
+		fmt.Printf("PrintGames()\nGame ID: %d, Game Details:  \n Deck cards number:%+v\n Hands: %v \n", id, len(game.Deck), game.Players)
+	}
+}
+
+func (c *Clients) PrintClients() {
+	for id, client := range c.clients {
+		fmt.Printf("PrintClients()\nClient ID: %s, Client Info: %v \n", id, client)
+	}
+}
+
 func main() {
-	func main() {
-	http.HandleFunc("/ws", handleConnections) //http crea una goroutine
-	go handleMessages()
+	games := GameCollection{}
+	a := 1
+	fmt.Print(a)
+	var gameCounter int
+	c := Clients{
+		clients: make(map[string]ClientInfo),
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./index.html") // Serve the HTML file
+	})
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("."))))
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		handleConnections(w, r, &c)
+	})
+
 	port := ":8080"
 	fmt.Printf("Server starting on port %s...\n", port)
-	err := http.ListenAndServe(port, nil) //avvio del server: ogni connessione in arrivo viene avviata in una goroutine separata DI DEFAULT e quindi al suo interno handleConnections
+	go handleMessages(games, &c, &gameCounter)
+	err := http.ListenAndServe(port, nil) //avvio deL server: ogni connessione in arrivo viene avviata in una goroutine separata DI DEFAULT e quindi al suo interno handleConnections
 	if err != nil {
 		log.Fatal("Server error:", err)
 	}
-	game := NewGame([]string{"Alice", "Bob"})
-	fmt.Printf("La briscola è: %v\n\n", game.Briscola)
-	displayHands(game)
-	for len(game.Deck) > 0 {
-		playRound(game) // Step 3: Play a round
-		game.Draw()
-		displayScores(game)
-	}
 
-	// Play remaining cards in hands after deck is exhausted
-	for len(game.Players[0].Hand) > 0 {
-		playRound(game)
-		displayScores(game)
-	}
+	log.Println("ciaoinmain")
+	/*
+	   fmt.Printf("La briscola è: %v\n\n", game.Briscola)
+	   displayHands(game)
+
+	   	for len(game.Deck) > 0 {
+	   		playRound(game) // Step 3: Play a round
+	   		game.Draw()
+	   		displayScores(game)
+	   	}
+
+	   // Play remaining cards in hands after deck is exhausted
+
+	   	for len(game.Players[0].Hand) > 0 {
+	   		playRound(game)
+	   		displayScores(game)
+	   	}
+	*/
 }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        select, input[type="radio"] {
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Setup</h1>
+        
+        <!-- Number of Players -->
+        <label for="numPlayers">Select Number of Players:</label>
+        <select id="numPlayers">
+            <option value="1">1 Player</option>
+            <option value="2">2 Players</option>
+            <option value="3">3 Players</option>
+            <option value="4">4 Players</option>
+        </select>
+        
+        <!-- Game Mode -->
+        <label>Choose Opponent:</label>
+        <input type="radio" id="vsCpu" name="opponent" value="cpu" checked>
+        <label for="vsCpu">Play vs CPU</label><br>
+        <input type="radio" id="vsHuman" name="opponent" value="human">
+        <label for="vsHuman">Play vs Human</label><br>
+            
+        
+        <!-- Submit Button -->
+        <button onclick="startGame()">Start Game</button>
+    </div>
+    <script src="/static/script.js"></script> 
+</body>
+</html>
+
