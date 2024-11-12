@@ -24,7 +24,7 @@ ws.onerror = function (error) {
 
 /*
 ws.send(JSON.stringify({ action: "pick_card", value: 2, player:"simo", clientId:"7799"}));
-
+a
 ws.send(JSON.stringify({ action: "startGame", value: 0, player:"simo", clientId:"7799"}));
 
 

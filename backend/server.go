@@ -65,6 +65,7 @@ type Game struct {
 	Players      []Player
 	Briscola     Card
 	CurrentTrick []Card
+	CardsPlayed  int
 	Turn         int
 }
 
@@ -98,21 +99,22 @@ func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
 
 	briscola := deck[len(deck)-1] //l'ultima quella più in basso
 	turn := 0
-
+	cardsPlayed := 0
 	return &Game{
-		Id:       id,
-		Deck:     deck,
-		Players:  players,
-		Briscola: briscola,
-		Turn:     turn,
+		Id:           id,
+		Deck:         deck,
+		Players:      players,
+		Briscola:     briscola,
+		CurrentTrick: make([]Card, 4),
+		CardsPlayed:  cardsPlayed,
+		Turn:         turn,
 	}
 }
 
 func (g *Game) DetermineTrickWinner() int {
-	fmt.Printf("Il trick dentro trickwinner è %v", g.CurrentTrick)
-	winningCard := g.CurrentTrick[0]
-	winnerIndex := 0
-	fmt.Printf("\nTrick: %v -> ", g.CurrentTrick)
+	firstTrickPlayer := (g.Turn + 1) % len(g.Players)
+	winningCard := g.CurrentTrick[firstTrickPlayer] //la carta vincente è quella del successivo all'ultimo che ha giocato, ossia la prima del trick
+	winnerIndex := firstTrickPlayer
 	//scambia 3  con 11 e 1 (asso) con 12 per un controllo corretto
 	getRank := func(card Card) int {
 		switch card.Value {
@@ -137,8 +139,7 @@ func (g *Game) DetermineTrickWinner() int {
 			winnerIndex = i
 		}
 	}
-	fmt.Printf("winnerIndex: %v, g.Turn: %d, len(g.Players): %d\n", winnerIndex, g.Turn, len(g.Players))
-	return (winnerIndex + g.Turn) % len(g.Players)
+	return winnerIndex
 }
 
 func CalculateScore(card Card) int {
@@ -162,15 +163,19 @@ func (g *Game) ScoreTrick(i int) {
 	for _, card := range g.CurrentTrick {
 		g.Players[i].Score += CalculateScore(card)
 	}
-	g.CurrentTrick = nil
+	g.CurrentTrick = []Card{
+		{Value: 0, Suit: ""},
+		{Value: 0, Suit: ""},
+		{Value: 0, Suit: ""},
+		{Value: 0, Suit: ""},
+	}
 }
 
-func (g *Game) Draw() {
+func (g *Game) DrawReset() {
 	for i := range g.Players {
 		g.Players[i].Hand = append(g.Players[i].Hand, g.Deck[0])
 		g.Deck = g.Deck[1:]
 	}
-	g.CurrentTrick = nil
 }
 
 func setupPlayers() ([]string, []bool) {
@@ -273,9 +278,9 @@ func displayHands(game *Game) {
 }
 
 func (c *Clients) SafeAdd(ws *websocket.Conn) string {
-	c.mu.Lock()                                // Lock to ensure thread-safe access to the map
-	defer c.mu.Unlock()                        // Ensure unlocking happens after the modification
-	clientID := strconv.Itoa(rand.Intn(10000)) // Inside the lock, check if ID exists already, or generate a new one (if needed)
+	c.mu.Lock()                            // Lock to ensure thread-safe access to the map
+	defer c.mu.Unlock()                    // Ensure unlocking happens after the modification
+	clientID := strconv.Itoa(rand.Intn(1)) // Inside the lock, check if ID exists already, or generate a new one (if needed)
 	c.clients[clientID] = ClientInfo{Conn: ws, GameId: -1}
 	log.Printf("SafeAdd: Added client %s to the map %v", clientID, c.clients)
 	return clientID
@@ -283,7 +288,7 @@ func (c *Clients) SafeAdd(ws *websocket.Conn) string {
 
 func (games GameCollection) PrintGames() {
 	for id, game := range games {
-		fmt.Printf("PrintGames()\nGame ID: %d, Game Details: Briscola: %v \n Deck cards number:%+v\n Hands: %v \n, Trick: %v", id, game.Briscola, len(game.Deck), game.Players, game.CurrentTrick)
+		fmt.Printf("PrintGames()\nGame ID: %d, Game Details: Briscola: %v \n Deck cards number:%+v\n Hands: %v \n, Trick: %v \n Turn: %d,\n CardsPlayed: %d", id, game.Briscola, len(game.Deck), game.Players, game.CurrentTrick, game.Turn, game.CardsPlayed)
 	}
 }
 

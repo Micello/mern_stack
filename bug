@@ -1,0 +1,150 @@
+PrintGames()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [0/8]
+Game ID: 1, Game Details: Briscola: {1 Spade}
+ Deck cards number:34
+ Hands: [{simo [{1 Coppe} {1 Bastoni} {6 Spade}] 0 false} {bot [{2 Coppe} {6 Denari} {6 Coppe}] 0 true}]
+, Trick: [{0 } {0 } {0 } {0 }]
+ Turn: 0,
+ CardsPlayed: 0PrintClients()
+Client ID: 0, Client Info: {0xc00020c6e0 1}
+2024/11/12 01:55:13 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:55:13
+
+game: &{1 [{9 Coppe} {4 Coppe} {10 Bastoni} {10 Denari} {4 Spade} {9 Denari} {8 Coppe} {7 Spade} {3 Coppe} {5 Spade} {7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {6 Spade}] 0 false} {bot [{2 Coppe} {6 Denari} {6 Coppe}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {6 Spade}
+2024/11/12 01:55:13 IL GIOCATORE simo HA SCELTO 6 DI Spade
+IMPORTANTE: TRICK: [{6 Spade} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {2 Coppe}
+2024/11/12 01:55:13 IL GIOCATORE bot HA SCELTO 2 DI Coppe
+Bot: Il trick è pieno ed è: [{6 Spade} {2 Coppe} {0 } {0 }]
+2024/11/12 01:55:13 Bot: Player simo wins the trick
+
+2024/11/12 01:55:30 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:55:30
+
+game: &{1 [{10 Bastoni} {10 Denari} {4 Spade} {9 Denari} {8 Coppe} {7 Spade} {3 Coppe} {5 Spade} {7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {9 Coppe}] 0 false} {bot [{6 Denari} {6 Coppe} {4 Coppe}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {9 Coppe}
+2024/11/12 01:55:30 IL GIOCATORE simo HA SCELTO 9 DI Coppe
+IMPORTANTE: TRICK: [{9 Coppe} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {6 Denari}
+2024/11/12 01:55:30 IL GIOCATORE bot HA SCELTO 6 DI Denari
+Bot: Il trick è pieno ed è: [{9 Coppe} {6 Denari} {0 } {0 }]
+2024/11/12 01:55:30 Bot: Player simo wins the trick
+
+2024/11/12 01:55:58 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:55:58
+
+game: &{1 [{4 Spade} {9 Denari} {8 Coppe} {7 Spade} {3 Coppe} {5 Spade} {7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {10 Bastoni}] 3 false} {bot [{6 Coppe} {4 Coppe} {10 Denari}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {10 Bastoni}
+2024/11/12 01:55:58 IL GIOCATORE simo HA SCELTO 10 DI Bastoni
+IMPORTANTE: TRICK: [{10 Bastoni} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {6 Coppe}
+2024/11/12 01:55:58 IL GIOCATORE bot HA SCELTO 6 DI Coppe
+Bot: Il trick è pieno ed è: [{10 Bastoni} {6 Coppe} {0 } {0 }]
+2024/11/12 01:55:58 Bot: Player simo wins the trick
+
+2024/11/12 01:56:17 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:56:17
+
+game: &{1 [{8 Coppe} {7 Spade} {3 Coppe} {5 Spade} {7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {4 Spade}] 7 false} {bot [{4 Coppe} {10 Denari} {9 Denari}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {4 Spade}
+2024/11/12 01:56:17 IL GIOCATORE simo HA SCELTO 4 DI Spade
+IMPORTANTE: TRICK: [{4 Spade} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {4 Coppe}
+2024/11/12 01:56:17 IL GIOCATORE bot HA SCELTO 4 DI Coppe
+Bot: Il trick è pieno ed è: [{4 Spade} {4 Coppe} {0 } {0 }]
+2024/11/12 01:56:17 Bot: Player simo wins the trick
+
+2024/11/12 01:56:26 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:56:26
+
+game: &{1 [{3 Coppe} {5 Spade} {7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {8 Coppe}] 7 false} {bot [{10 Denari} {9 Denari} {7 Spade}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {8 Coppe}
+2024/11/12 01:56:26 IL GIOCATORE simo HA SCELTO 8 DI Coppe
+IMPORTANTE: TRICK: [{8 Coppe} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {10 Denari}
+2024/11/12 01:56:26 IL GIOCATORE bot HA SCELTO 10 DI Denari
+Bot: Il trick è pieno ed è: [{8 Coppe} {10 Denari} {0 } {0 }]
+2024/11/12 01:56:26 Bot: Player simo wins the trick
+
+2024/11/12 01:56:31 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:56:31
+
+game: &{1 [{7 Denari} {7 Bastoni} {2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {3 Coppe}] 13 false} {bot [{9 Denari} {7 Spade} {5 Spade}] 0 true}] {1 Spade} [{0 } {0 } {0 } {0 }] 0 0}
+
+0 0
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {3 Coppe}
+2024/11/12 01:56:31 IL GIOCATORE simo HA SCELTO 3 DI Coppe
+IMPORTANTE: TRICK: [{3 Coppe} {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {5 Spade}
+2024/11/12 01:56:31 IL GIOCATORE bot HA SCELTO 5 DI Spade
+Bot: Il trick è pieno ed è: [{3 Coppe} {5 Spade} {0 } {0 }]
+2024/11/12 01:56:31 Bot: Player bot wins the trick
+
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {7 Bastoni}
+2024/11/12 01:56:31 IL GIOCATORE bot HA SCELTO 7 DI Bastoni
+2024/11/12 01:56:43 Received message: Action: pick_card, Player: simo, Value: 2
+2024/11/12 01:56:43
+
+game: &{1 [{2 Spade} {9 Bastoni} {5 Bastoni} {10 Spade} {8 Spade} {2 Bastoni} {3 Bastoni} {7 Coppe} {6 Bastoni} {9 Spade} {8 Denari} {4 Bastoni} {3 Spade} {1 Denari} {5 Coppe} {4 Denari} {10 Coppe} {3 Denari} {5 Denari} {2 Denari} {8 Bastoni} {1 Spade}] [{simo [{1 Coppe} {1 Bastoni} {7 Denari}] 13 false} {bot [{9 Denari} {7 Spade}] 10 true}] {1 Spade} [{0 } {7 Bastoni} {0 } {0 }] 1 0}
+
+1 0
+IMPORTANTE: TRICK: [{0 } {7 Bastoni} {0 } {0 }]
+ giocatore 0 sta scegliendo una carta
+ pickedCard: {7 Denari}
+2024/11/12 01:56:43 IL GIOCATORE simo HA SCELTO 7 DI Denari
+2024/11/12 01:56:43 Il vincitore è indice: 1
+IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
+ giocatore 1 sta scegliendo una carta
+ pickedCard: {9 Denari}
+2024/11/12 01:56:43 IL GIOCATORE bot HA SCELTO 9 DI Denari
+2024/11/12 01:56:43 Player bot wins the trick
+ game turn is 0
+ trick is [{0 } {9 Denari} {0 } {0 }]
+ cardsplayed is 3
+^Csignal: interrupt
+
+~/mern_stack/backend >                                             λ:master  [  ]
+
+~/mern_stack/backend > cd ..                                       λ:master  [  ]
+
+~/mern_stack > git add .                                           λ:master  [  ]
+
+~/mern_stack > git commit -m "quasi completata logica risolvere    λ:master  [ + ]
+
+~/mern_stack > cd ..                                               λ:master  [ + ]
+
+~/mern_stack > nvim bug                                            λ:master  [ + ]
+
+~/mern_stack >                                                                                                                                                                                                                   λ:master  [ + ]
+[1] 1:[tmux]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "pop-os" 02:02 12-Nov-24
+
