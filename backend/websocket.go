@@ -18,11 +18,11 @@ var broadcast = make(chan Message)
 
 func pickCard(g *Game, pickNum int) {
 	pickedCard := g.Players[g.Turn].Hand[pickNum]
-	fmt.Printf("IMPORTANTE: TRICK: %v\n giocatore %d sta scegliendo una carta\n pickedCard: %v\n", g.CurrentTrick, g.Turn, pickedCard)
 	g.CurrentTrick[g.Turn] = pickedCard
 	g.Players[g.Turn].Hand = removeCard(g.Players[g.Turn].Hand, pickedCard)
 	g.CardsPlayed++
 	log.Printf("IL GIOCATORE %s HA SCELTO %v DI %s", g.Players[g.Turn].Name, pickedCard.Value, pickedCard.Suit)
+	fmt.Printf("TRICK: %v\n ", g.CurrentTrick)
 }
 func removeCard(hand []Card, card Card) []Card {
 	for i, c := range hand {
@@ -127,22 +127,34 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 	fmt.Println(game.CardsPlayed, game.Turn)
 	pickCard(game, msg.Value)
 	if game.CardsPlayed == len(game.Players) {
+		fmt.Printf("Il trick è pieno ed è: %v\n", game.CurrentTrick)
 		winnerIndex := game.DetermineTrickWinner()
 		log.Printf("Il vincitore è indice: %v", winnerIndex)
 		game.ScoreTrick(winnerIndex)
 		game.Turn = winnerIndex
-		// Check if deck has cards to draw
+
+		game.CardsPlayed = 0
+		game.CurrentTrick = []Card{
+			{Value: 0, Suit: ""},
+			{Value: 0, Suit: ""},
+			{Value: 0, Suit: ""},
+			{Value: 0, Suit: ""},
+		}
 		if len(game.Deck) > 0 {
 			game.DrawReset()
 		} else {
-			// End game logic can go here if the deck is exhausted
+			if len(game.Players[0].Hand) == 0 {
+				fmt.Printf("Gioco finito")
+				return
+			}
 		}
 		broadcastGameState(game, c)
 
+		log.Printf("Player %s wins the trick\n game turn is %d\n trick is %v\n cardsplayed is %d\n SCORE: %v", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[winnerIndex].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
 		}
-		log.Printf("Player %s wins the trick\n game turn is %d\n trick is %v\n cardsplayed is %d", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed)
+
 	} else {
 		// Advance to the next player's turn
 		game.Turn = (game.Turn + 1) % len(game.Players) //g.Turn: chi ha vinto per ultimo, iTurn a chi tocca
@@ -155,16 +167,13 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 
 func playBotTurn(game *Game, c *Clients) {
 	bot := &game.Players[game.Turn]
-
 	pickNum := rand.Intn(len(bot.Hand))
 	pickCard(game, pickNum) // Bot plays its chosen card
-
 	if game.CardsPlayed == len(game.Players) {
 		// Determine the winner of the trick
 		fmt.Printf("Bot: Il trick è pieno ed è: %v\n", game.CurrentTrick)
 		winnerIndex := game.DetermineTrickWinner()
 		game.ScoreTrick(winnerIndex)
-		log.Printf("Bot: Player %s wins the trick\n ", game.Players[winnerIndex].Name)
 		// Set the next turn to the winner
 		game.Turn = winnerIndex
 		game.CardsPlayed = 0
@@ -178,11 +187,15 @@ func playBotTurn(game *Game, c *Clients) {
 		if len(game.Deck) > 0 {
 			game.DrawReset()
 		} else {
-			// End game logic can go here if the deck is exhausted
+			if len(game.Players[0].Hand) == 0 {
+				fmt.Printf("Gioco finito")
+				return
+			}
 		}
 		// Notify clients of the updated game state
 		//	broadcastGameState(game, c)
 		// If the bot won, it should immediately start the next trick
+		log.Printf("Player %s wins the trick\n game turn is %d\n trick is %v\n cardsplayed is %d\n SCORE: %v", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[winnerIndex].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
 		}

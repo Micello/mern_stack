@@ -131,20 +131,3 @@ IMPORTANTE: TRICK: [{0 } {0 } {0 } {0 }]
  game turn is 0
  trick is [{0 } {9 Denari} {0 } {0 }]
  cardsplayed is 3
-^Csignal: interrupt
-
-~/mern_stack/backend >                                             λ:master  [  ]
-
-~/mern_stack/backend > cd ..                                       λ:master  [  ]
-
-~/mern_stack > git add .                                           λ:master  [  ]
-
-~/mern_stack > git commit -m "quasi completata logica risolvere    λ:master  [ + ]
-
-~/mern_stack > cd ..                                               λ:master  [ + ]
-
-~/mern_stack > nvim bug                                            λ:master  [ + ]
-
-~/mern_stack >                                                                                                                                                                                                                   λ:master  [ + ]
-[1] 1:[tmux]*                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "pop-os" 02:02 12-Nov-24
-
