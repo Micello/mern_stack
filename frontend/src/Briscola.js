@@ -1,6 +1,6 @@
 import {Hand, OpponentHand} from './Hand';
 import Card from './Card';
-import {useState } from 'react';
+import {useState, useEffect} from 'react';
 
 const playerCards = [
   { id: 1, rank: "A", suit: "bastoni", location: 0 },
@@ -39,10 +39,11 @@ export default function Briscola(){
   const [opponentScore, setOpponentScore] = useState(0);
   const [turn, setTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  
+ 
+  const [socket, setSocket] = useState(false)
   const handleCardClick = (card) => {
     if (turn%2==1) {return}
-    console.log("card clicked")
+    console.log("card clicked") 
     const newHand = playerHand.filter(c => c.id !== card.id); //card è la carta cliccata
     setPlayerHand(newHand);
 

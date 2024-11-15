@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
-	"log"
 	"math/rand"
 	"net/http"
 )
@@ -21,7 +20,7 @@ func pickCard(g *Game, pickNum int) {
 	g.CurrentTrick[g.Turn] = pickedCard
 	g.Players[g.Turn].Hand = removeCard(g.Players[g.Turn].Hand, pickedCard)
 	g.CardsPlayed++
-	log.Printf("IL GIOCATORE %s HA SCELTO %v DI %s", g.Players[g.Turn].Name, pickedCard.Value, pickedCard.Suit)
+	fmt.Printf("IL GIOCATORE %s HA SCELTO %v DI %s\n", g.Players[g.Turn].Name, pickedCard.Value, pickedCard.Suit)
 	fmt.Printf("TRICK: %v\n ", g.CurrentTrick)
 }
 func removeCard(hand []Card, card Card) []Card {
@@ -35,7 +34,7 @@ func removeCard(hand []Card, card Card) []Card {
 func handleConnections(w http.ResponseWriter, r *http.Request, c *Clients) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Error upgrading to websocket: %v", err)
+		fmt.Printf("Error upgrading to websocket: %v", err)
 		return
 	}
 	defer ws.Close()
@@ -47,16 +46,16 @@ func handleConnections(w http.ResponseWriter, r *http.Request, c *Clients) {
 	}
 	err = ws.WriteJSON(initialMsg) //Manda il Clientid all'utente
 	if err != nil {
-		log.Printf("Error sending clientId to client: %v", err)
+		fmt.Printf("Error sending clientId to client: %v", err)
 		return
 	}
 
 	for {
 		var msg Message
 		err := ws.ReadJSON(&msg) //blocking operation
-		log.Printf("Received message: Action: %s, Player: %s, Value: %d", msg.Action, msg.Player, msg.Value)
+		fmt.Printf("Received message: Action: %s, Player: %s, Value: %d\n", msg.Action, msg.Player, msg.Value)
 		if err != nil {
-			log.Printf("Error reading JSON: %v", err)
+			fmt.Printf("Error reading JSON: %v", err)
 			//	delete(c.v, id)
 			break
 		}
@@ -86,7 +85,7 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 				c.PrintClients()
 
 			default:
-				log.Println("Modalità sconoscoiuta:", msg.Value)
+				fmt.Println("Modalità sconoscoiuta:", msg.Value)
 			}
 
 		case "pick_card":
@@ -94,14 +93,14 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 			handlePickCard(msg, games, c)
 
 		default:
-			log.Println("Unknown action:", msg.Action)
+			fmt.Println("Unknown action:", msg.Action)
 		}
 
 		/* Broadcast the message to all connected clients (Per pvp)
 		for client := range clients {
 			err := client.WriteJSON(msg) //takes the msg struct, converts it to JSON, and it over the WebSocket connection to the specified client.
 			if err != nil {
-				log.Printf("Error writing JSON: %v", err)
+				fmt.Printf("Error writing JSON: %v", err)
 				client.Close()
 				delete(clients, client)
 			}
@@ -113,23 +112,22 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 func handlePickCard(msg Message, games GameCollection, c *Clients) {
 	clientInfo := c.clients[msg.ClientID]
 	game, gameExists := games[clientInfo.GameId]
-	log.Printf("\n\ngame: %v\n\n", game)
+	fmt.Printf("\ngame: %v\n\n", game)
 	if !gameExists {
-		log.Printf("Game not found for client %s", msg.ClientID)
+		fmt.Printf("Game not found for client %s", msg.ClientID)
 		return
 	}
 
 	//Controlla turno
 	if game.Players[game.Turn].Name != msg.Player {
-		log.Printf("Not %s's turn", msg.Player)
+		fmt.Printf("Not %s's turn", msg.Player)
 		return
 	}
-	fmt.Println(game.CardsPlayed, game.Turn)
 	pickCard(game, msg.Value)
 	if game.CardsPlayed == len(game.Players) {
-		fmt.Printf("Il trick è pieno ed è: %v\n", game.CurrentTrick)
+		fmt.Printf("Il trick è pieno")
 		winnerIndex := game.DetermineTrickWinner()
-		log.Printf("Il vincitore è indice: %v", winnerIndex)
+		fmt.Printf("Il vincitore è indice: %v\n", winnerIndex)
 		game.ScoreTrick(winnerIndex)
 		game.Turn = winnerIndex
 
@@ -142,15 +140,15 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 		}
 		if len(game.Deck) > 0 {
 			game.DrawReset()
-		} else {
+		} else { // Verifica che msg.value sia minore del numero da fare nel client
 			if len(game.Players[0].Hand) == 0 {
 				fmt.Printf("Gioco finito")
 				return
 			}
 		}
-		broadcastGameState(game, c)
+		//broadcastGameState(game, c) per pvp
 
-		log.Printf("Player %s wins the trick\n game turn is %d\n trick is %v\n cardsplayed is %d\n SCORE: %v", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[winnerIndex].Score)
+		fmt.Printf("Player %s wins the trick\n\n game turn is %d trick is %v cardsplayed is %d\n SCORE: Player1: %v Player2: %v\n", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[0].Score, game.Players[1].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
 		}
@@ -171,7 +169,7 @@ func playBotTurn(game *Game, c *Clients) {
 	pickCard(game, pickNum) // Bot plays its chosen card
 	if game.CardsPlayed == len(game.Players) {
 		// Determine the winner of the trick
-		fmt.Printf("Bot: Il trick è pieno ed è: %v\n", game.CurrentTrick)
+		fmt.Printf("Bot: Il trick è pieno\n")
 		winnerIndex := game.DetermineTrickWinner()
 		game.ScoreTrick(winnerIndex)
 		// Set the next turn to the winner
@@ -186,16 +184,17 @@ func playBotTurn(game *Game, c *Clients) {
 		// Draw cards for players if available
 		if len(game.Deck) > 0 {
 			game.DrawReset()
-		} else {
+		} else { // Nota: il client in questo caso non deve mandare msg.value maggiore al numero di carte possedute in una mano o crasha
+
 			if len(game.Players[0].Hand) == 0 {
 				fmt.Printf("Gioco finito")
 				return
 			}
 		}
 		// Notify clients of the updated game state
-		//	broadcastGameState(game, c)
+		broadcastGameState(game, c)
 		// If the bot won, it should immediately start the next trick
-		log.Printf("Player %s wins the trick\n game turn is %d\n trick is %v\n cardsplayed is %d\n SCORE: %v", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[winnerIndex].Score)
+		fmt.Printf("Player %s wins the trick\n\n game turn is %d trick is %v cardsplayed is %d\n SCORE: Player1: %v Player2: %v\n", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[0].Score, game.Players[1].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
 		}
@@ -213,7 +212,7 @@ func broadcastGameState(game *Game, c *Clients) {
 		if client.GameId == game.Id {
 			err := client.Conn.WriteJSON(game) // Simplified for illustration
 			if err != nil {
-				log.Printf("Error broadcasting game state to client %v: %v", client, err)
+				fmt.Printf("Error broadcasting game state to client %v: %v", client, err)
 			}
 		}
 	}

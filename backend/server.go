@@ -288,7 +288,7 @@ func (c *Clients) SafeAdd(ws *websocket.Conn) string {
 
 func (games GameCollection) PrintGames() {
 	for id, game := range games {
-		fmt.Printf("PrintGames()\nGame ID: %d, Game Details: Briscola: %v \n Deck cards number:%+v\n Hands: %v \n, Trick: %v \n Turn: %d,\n CardsPlayed: %d", id, game.Briscola, len(game.Deck), game.Players, game.CurrentTrick, game.Turn, game.CardsPlayed)
+		fmt.Printf("PrintGames()\nGame ID: %d, Game Details: Briscola: %v \n Deck cards number:%+v\n Hands: %v \n, Trick: %v \n Turn: %d,\n CardsPlayed: %d\n", id, game.Briscola, len(game.Deck), game.Players, game.CurrentTrick, game.Turn, game.CardsPlayed)
 	}
 }
 
