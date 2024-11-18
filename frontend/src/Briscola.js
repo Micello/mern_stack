@@ -34,7 +34,7 @@ export default function Briscola() {
   const [playerHand, setPlayerHand] = useState(playerCards);
   const [board, setBoard] = useState(boardCards);
   const [opponentHandSize, setOpponentHandSize] = useState(3);
-  const [briscolaSuit, setBriscolaSuit] = useState({ id: 1, rank: "A", suit: "Spadess" });
+  const [briscolaSuit, setBriscolaSuit] = useState({ id: 0, rank: "A", suit: "Spadess" });
   const [playerScore, setPlayerScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
   const [turn, setTurn] = useState(0);
@@ -48,7 +48,9 @@ export default function Briscola() {
     ws.onopen = () => {
       console.log("Briscola.js: Connected to Websocket server!");
       setSocket(ws);
-    }:
+    };
+
+
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -78,6 +80,12 @@ export default function Briscola() {
       ws.close();
     };
   }, []);
+
+  const playCard = (card) => {
+    if (socket) {
+      socket.send(JSON.stringify({ type: "playCard", card }));
+    }
+  };
 
   const handleCardClick = (card) => {
     if (turn % 2 == 1) { return }

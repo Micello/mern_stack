@@ -69,6 +69,18 @@ type Game struct {
 	Turn         int
 }
 
+type GameState struct {
+	Action           string `json:"action"`           // "update"
+	PlayerHand       []Card `json:"playerHand"`       // The player's hand (list of cards)
+	Board            []Card `json:"board"`            // Cards on the board
+	OpponentHandSize int    `json:"opponentHandSize"` // Number of cards in opponent's hand
+	BriscolaSuit     Card   `json:"briscolaSuit"`     // The current Briscola card
+	PlayerScore      int    `json:"playerScore"`      // Player's score
+	OpponentScore    int    `json:"opponentScore"`    // Opponent's score
+	Turn             int    `json:"turn"`             // Whose turn it is
+	GameOver         bool   `json:"gameOver"`         // Whether the game is over
+}
+
 type GameCollection map[int]*Game
 
 type ClientInfo struct {
