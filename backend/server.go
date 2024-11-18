@@ -53,6 +53,7 @@ func (d *Deck) Shuffle() {
 }
 
 type Player struct {
+	Id    int
 	Name  string
 	Hand  []Card
 	Score int
@@ -120,6 +121,32 @@ func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
 		CurrentTrick: make([]Card, 4),
 		CardsPlayed:  cardsPlayed,
 		Turn:         turn,
+	}
+}
+
+func CreateGameState(game Game, playerID int) GameState {
+	var player, opponent Player
+
+	// Find the current player and opponent
+	for _, p := range game.Players {
+		if p.Name == playerID {
+			player = p
+		} else {
+			opponent = p
+		}
+	}
+
+	// Construct and return the GameState
+	return GameState{
+		Action:           "update",
+		PlayerHand:       player.Hand,
+		Board:            game.CurrentTrick,
+		OpponentHandSize: len(opponent.Hand),
+		BriscolaSuit:     game.Briscola,
+		PlayerScore:      player.Score,
+		OpponentScore:    opponent.Score,
+		Turn:             game.Turn,
+		GameOver:         game.CardsPlayed == len(game.Deck.Cards), // Example condition
 	}
 }
 
