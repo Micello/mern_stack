@@ -81,6 +81,7 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 				//
 				clientInfo := c.clients[msg.ClientID]
 				clientInfo.GameId = game.Id
+				//clientInfo.PlayerId = game.Players[] per ora escludiamo l'implementazione dei player (richiede autenticazione)
 				c.clients[msg.ClientID] = clientInfo
 				c.PrintClients()
 
@@ -208,9 +209,10 @@ func playBotTurn(game *Game, c *Clients) {
 	}
 }
 func broadcastGameState(game *Game, c *Clients) {
+	gameState := CreateGameState(*game)
 	for _, client := range c.clients {
 		if client.GameId == game.Id {
-			err := client.Conn.WriteJSON(game) // Simplified for illustration
+			err := client.Conn.WriteJSON(gameState) // Simplified for illustration
 			if err != nil {
 				fmt.Printf("Error broadcasting game state to client %v: %v", client, err)
 			}

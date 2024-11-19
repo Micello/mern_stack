@@ -79,7 +79,7 @@ type GameState struct {
 	PlayerScore      int    `json:"playerScore"`      // Player's score
 	OpponentScore    int    `json:"opponentScore"`    // Opponent's score
 	Turn             int    `json:"turn"`             // Whose turn it is
-	GameOver         bool   `json:"gameOver"`         // Whether the game is over
+	// GameOver         bool   `json:"gameOver"`         // Whether the game is over
 }
 
 type GameCollection map[int]*Game
@@ -124,19 +124,10 @@ func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
 	}
 }
 
-func CreateGameState(game Game, playerID int) GameState {
-	var player, opponent Player
-
-	// Find the current player and opponent
-	for _, p := range game.Players {
-		if p.Name == playerID {
-			player = p
-		} else {
-			opponent = p
-		}
-	}
-
-	// Construct and return the GameState
+func CreateGameState(game Game) GameState {
+	//Assumiamo che l'umano sia il giocatore 0
+	player := game.Players[0]
+	opponent := game.Players[1]
 	return GameState{
 		Action:           "update",
 		PlayerHand:       player.Hand,
@@ -146,7 +137,7 @@ func CreateGameState(game Game, playerID int) GameState {
 		PlayerScore:      player.Score,
 		OpponentScore:    opponent.Score,
 		Turn:             game.Turn,
-		GameOver:         game.CardsPlayed == len(game.Deck.Cards), // Example condition
+		//		GameOver:         game.gameOver,
 	}
 }
 
