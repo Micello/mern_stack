@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/websocket"
 	"math/rand"
 	"net/http"
-
-	"github.com/gorilla/websocket"
+	"time"
 )
 
 var upgrader = websocket.Upgrader{
@@ -85,6 +85,7 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 				//clientInfo.PlayerId = game.Players[] per ora escludiamo l'implementazione dei player (richiede autenticazione)
 				c.clients[msg.ClientID] = clientInfo
 				c.PrintClients()
+				broadcastGameState(game, c)
 
 			default:
 				fmt.Println("Modalità sconoscoiuta:", msg.Value)
@@ -126,6 +127,7 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 		return
 	}
 	pickCard(game, msg.Value)
+
 	if game.CardsPlayed == len(game.Players) {
 		fmt.Printf("Il trick è pieno")
 		winnerIndex := game.DetermineTrickWinner()
@@ -166,9 +168,12 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 }
 
 func playBotTurn(game *Game, c *Clients) {
+	time.Sleep(2 * time.Second)
 	bot := &game.Players[game.Turn]
 	pickNum := rand.Intn(len(bot.Hand))
 	pickCard(game, pickNum) // Bot plays its chosen card
+	broadcastGameState(game, c)
+	time.Sleep(2 * time.Second)
 	if game.CardsPlayed == len(game.Players) {
 		// Determine the winner of the trick
 		fmt.Printf("Bot: Il trick è pieno\n")
@@ -195,6 +200,7 @@ func playBotTurn(game *Game, c *Clients) {
 		}
 		// Notify clients of the updated game state
 		broadcastGameState(game, c)
+		time.Sleep(2 * time.Second)
 		// If the bot won, it should immediately start the next trick
 		fmt.Printf("Mani: %v, %v\n", game.Players[0], game.Players[1])
 		fmt.Printf("Player %s wins the trick\n\n game turn is %d trick is %v cardsplayed is %d\n SCORE: Player1: %v Player2: %v\n", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[0].Score, game.Players[1].Score)
@@ -205,6 +211,7 @@ func playBotTurn(game *Game, c *Clients) {
 		// If the trick is not complete, proceed to the next player's turn
 		game.Turn = (game.Turn + 1) % len(game.Players)
 		broadcastGameState(game, c)
+		time.Sleep(2 * time.Second)
 		// If the next player is the bot, have the bot play its turn
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)

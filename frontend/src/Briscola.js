@@ -2,25 +2,26 @@ import { Hand, OpponentHand } from './Hand';
 import Card from './Card';
 import { useState, useEffect } from 'react';
 
-const playerCards = [
+/*const playerCards = [
   { id: 1, rank: "A", suit: "bastoni", location: 0 },
   { id: 2, rank: "10", suit: "coppe", location: 0 },
   { id: 3, rank: "7", suit: "denari", location: 0 },
+];*/
+const startingBoard = [
+  { rank: 1, suit: "slot" },
+  { rank: 1, suit: "slot" },
 ];
+console.log("startingdioporco0" + JSON.stringify(startingBoard[0]));
+console.log("dioporco1" + JSON.stringify(startingBoard[1]));
 
 
-const boardCards = [
-  { id: 0, rank: "slot" },
-  { id: 1, rank: "slot" },
-];
 
-
-function Board({ briscolaSuit, boardCards }) {
+function Board({ briscolaSuit, board }) {
   return (
 
     <div className="h-full w-full grid grid-cols-5 grid-rows-6 gap-4">
-      <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card id={boardCards[1].id} rank={boardCards[1].rank} suit={boardCards[1].suit} location={boardCards[1].location} /></div>
-      <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card id={boardCards[0].id} rank={boardCards[0].rank} suit={boardCards[0].suit} location={boardCards[0].location} /></div>
+      <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card id={1} rank={board[1].rank} suit={board[1].suit} location={2} /></div>
+      <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card id={0} rank={board[0].rank} suit={board[0].suit} location={2} /></div>
       <div className="relative row-span-2 col-start-2 row-start-3 flex justify-end z-20">
         <div className="h-full aspect-[55/88] z-20"><Card /></div>
         <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card location={2} /></div>
@@ -31,8 +32,8 @@ function Board({ briscolaSuit, boardCards }) {
 }
 
 export default function Briscola() {
-  const [playerHand, setPlayerHand] = useState(playerCards);
-  const [board, setBoard] = useState(boardCards);
+  const [playerHand, setPlayerHand] = useState([]);
+  const [board, setBoard] = useState(startingBoard);
   const [opponentHandSize, setOpponentHandSize] = useState(3);
   const [briscolaSuit, setBriscolaSuit] = useState({ id: 0, rank: "A", suit: "Spadess" });
   const [playerScore, setPlayerScore] = useState(0);
@@ -52,7 +53,7 @@ export default function Briscola() {
       setSocket(ws);
       const message = {
         action: "startGame",
-        value: 0, // Assuming `id` is the index/identifier of the card in the hand
+        value: 0,
         player: playerId, // Replace with the current player's ID
         clientId: clientId, // Replace with the WebSocket client ID
       };
@@ -67,7 +68,8 @@ export default function Briscola() {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("Message from server:", data);
-
+      console.log("playerhand:" + JSON.stringify(data.playerHand))
+      console.log("data.board:" + JSON.stringify(data.board))
       if (data.action === "update") {
         setPlayerHand(data.playerHand);
         setBoard(data.board);
@@ -95,8 +97,11 @@ export default function Briscola() {
 
   const handleCardClick = (card) => {
     if (turn % 2 === 1) { return }
-    console.log("card clicked")
-    const newHand = playerHand.filter(c => c.id !== card.id); //card è la carta cliccata
+    console.log("card clicked:" + card + card.id)
+    console.log("Before filtering:", playerHand);
+    console.log("Clicked card:", card);
+    const newHand = playerHand.filter(c => c.id !== card.id);
+    console.log("After filtering:", newHand);
     setPlayerHand(newHand);
 
     const newBoard = [{ id: card.id, rank: card.rank, suit: card.suit, location: 2 }, board[1]];
@@ -135,7 +140,7 @@ export default function Briscola() {
           <div className="Enemyhand h-1/5 w-full flex justify-between ">
             <OpponentHand HandSize={opponentHandSize} playerScore={opponentScore} />
           </div>
-          <Board boardCards={board} briscolaSuit={briscolaSuit} />
+          <Board board={board} briscolaSuit={briscolaSuit} />
           <div className="Playerhand h-1/5 w-full flex  justify-between">
             <Hand Hand={playerHand} playerScore={playerScore} onCardClick={handleCardClick} />
           </div>

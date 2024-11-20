@@ -16,15 +16,15 @@ import (
 type Suit string
 
 const (
-	Denari  Suit = "Denari"
-	Coppe   Suit = "Coppe"
-	Bastoni Suit = "Bastoni"
-	Spade   Suit = "Spade"
+	denari  Suit = "denari"
+	coppe   Suit = "coppe"
+	bastoni Suit = "bastoni"
+	spade   Suit = "spade"
 )
 
 type Card struct {
-	Value int
-	Suit  Suit
+	Value int  `json:"rank"`
+	Suit  Suit `json:"suit"`
 }
 
 type Message struct {
@@ -37,7 +37,7 @@ type Message struct {
 type Deck []Card
 
 func NewDeck() Deck {
-	suits := []Suit{Denari, Coppe, Bastoni, Spade}
+	suits := []Suit{denari, coppe, bastoni, spade}
 	deck := Deck{}
 	for _, suit := range suits {
 		for i := 1; i <= 10; i++ {
@@ -75,7 +75,7 @@ type GameState struct {
 	PlayerHand       []Card `json:"playerHand"`       // The player's hand (list of cards)
 	Board            []Card `json:"board"`            // Cards on the board
 	OpponentHandSize int    `json:"opponentHandSize"` // Number of cards in opponent's hand
-	BriscolaSuit     Card   `json:"briscolaSuit"`     // The current Briscola card
+	Briscola         Card   `json:"briscola"`         // The current Briscola card
 	PlayerScore      int    `json:"playerScore"`      // Player's score
 	OpponentScore    int    `json:"opponentScore"`    // Opponent's score
 	Turn             int    `json:"turn"`             // Whose turn it is
@@ -133,7 +133,7 @@ func CreateGameState(game Game, c Clients) GameState {
 		PlayerHand:       player.Hand,
 		Board:            game.CurrentTrick,
 		OpponentHandSize: len(opponent.Hand),
-		BriscolaSuit:     game.Briscola,
+		Briscola:         game.Deck[0],
 		PlayerScore:      player.Score,
 		OpponentScore:    opponent.Score,
 		Turn:             game.Turn,

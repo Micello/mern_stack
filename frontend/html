@@ -1,0 +1,7 @@
+       <div className="row-span-2 col-start-3 row-start-2 flex justify-center"><Card id={board[1].id} rank={board[1].rank} suit={board[1].suit} location={board[1].location} /></div>
+      <div className="row-span-2 col-start-3 row-start-4 flex justify-center"><Card id={board[0].id} rank={board[0].rank} suit={board[0].suit} location={board[0].location} /></div>
+      <div className="relative row-span-2 col-start-2 row-start-3 flex justify-end z-20">
+        <div className="h-full aspect-[55/88] z-20"><Card /></div>
+        <div className="h-full aspect-[55/88] absolute rotate-[35deg] right-[-50px] z-10"><Card location={2} /></div>
+      </div>
+

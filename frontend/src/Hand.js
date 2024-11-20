@@ -1,6 +1,6 @@
 import Card from "./Card";
 
-export function OpponentHand({ HandSize, playerScore}) {
+export function OpponentHand({ HandSize, playerScore }) {
   // Create an array with HandSize length to simulate card data
   const cards = Array.from({ length: HandSize }, (_, index) => ({
     id: index + 1, // Unique id for each card
@@ -24,7 +24,7 @@ export function OpponentHand({ HandSize, playerScore}) {
                 angle={angle}
                 height={height}
                 scale={card.scale}
-                
+
               />
             </li>
           );
@@ -42,32 +42,34 @@ export function OpponentHand({ HandSize, playerScore}) {
 
 
 export function Hand({ Hand, playerScore, onCardClick }) {
-  
-    return (
-      <>
-        <div><Card /></div>
-        <ul className="flex h-full justify-center   ">
-          {Hand.map((card) => {
-              const angle = 0.02*(card.id - ((Hand.length+1)/2))
-              const height = 0.4*(card.id - (Hand.length+1)/2)*(card.id-(Hand.length+1)/2)
-              return (
-              <li className='h-full' key={card.id}>
-                <Card id={card.id}
-                      rank={card.rank}
-                      suit={card.suit}
-                      location={0}
-                      angle={angle}
-                      height={height}
-                      scale={card.scale}
-                      onClick={() => onCardClick(card)}/>
-                      
-              </li>
-            );
-          })}
-        </ul>
+
+  return (
+    <>
+      <div><Card /></div>
+      <ul className="flex h-full justify-center   ">
+        {Hand.map((card, i) => {
+          card.id = i
+          const angle = 0.02 * (card.id + 1 - ((Hand.length + 1) / 2))
+          const height = 0.4 * (card.id + 2 - (Hand.length + 1) / 2) * (card.id - (Hand.length + 1) / 2)
+          console.log("Prima carta:" + Hand[0].rank)
+          return (
+            <li className='h-full' key={card.id}>
+              <Card id={card.id}
+                rank={card.rank}
+                suit={card.suit}
+                location={0}
+                angle={angle}
+                height={height}
+                scale={card.scale}
+                onClick={() => onCardClick(card)} />
+
+            </li>
+          );
+        })}
+      </ul>
       <div className="text-4xl flex flex-col justify-center">
-          {'Score: ' + playerScore}
+        {'Score: ' + playerScore}
       </div>
-      </>
-    );
-  }
+    </>
+  );
+}
