@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
 	"math/rand"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -53,7 +54,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request, c *Clients) {
 	for {
 		var msg Message
 		err := ws.ReadJSON(&msg) //blocking operation
-		fmt.Printf("Received message: Action: %s, Player: %s, Value: %d\n", msg.Action, msg.Player, msg.Value)
+		fmt.Printf("Received message: Action: %s, Player: %s, Client: %s, Value: %d\n", msg.Action, msg.Player, msg.ClientID, msg.Value)
 		if err != nil {
 			fmt.Printf("Error reading JSON: %v", err)
 			//	delete(c.v, id)
@@ -74,7 +75,7 @@ func handleMessages(games GameCollection, c *Clients, gc *int) {
 			case 0:
 				fmt.Println("stai giocando vs cpu")
 
-				game := NewGame([]string{"simo", "bot"}, []bool{false, true}, gc)
+				game := NewGame([]string{"player1", "bot"}, []bool{false, true}, gc)
 				games[game.Id] = game
 				//Aggiunge ad un clientId il GameId
 				games.PrintGames()
@@ -148,7 +149,7 @@ func handlePickCard(msg Message, games GameCollection, c *Clients) {
 			}
 		}
 		//broadcastGameState(game, c) per pvp
-
+		fmt.Printf("Mani: %v, %v\n", game.Players[0], game.Players[1])
 		fmt.Printf("Player %s wins the trick\n\n game turn is %d trick is %v cardsplayed is %d\n SCORE: Player1: %v Player2: %v\n", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[0].Score, game.Players[1].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
@@ -195,6 +196,7 @@ func playBotTurn(game *Game, c *Clients) {
 		// Notify clients of the updated game state
 		broadcastGameState(game, c)
 		// If the bot won, it should immediately start the next trick
+		fmt.Printf("Mani: %v, %v\n", game.Players[0], game.Players[1])
 		fmt.Printf("Player %s wins the trick\n\n game turn is %d trick is %v cardsplayed is %d\n SCORE: Player1: %v Player2: %v\n", game.Players[winnerIndex].Name, game.Turn, game.CurrentTrick, game.CardsPlayed, game.Players[0].Score, game.Players[1].Score)
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
@@ -202,6 +204,7 @@ func playBotTurn(game *Game, c *Clients) {
 	} else {
 		// If the trick is not complete, proceed to the next player's turn
 		game.Turn = (game.Turn + 1) % len(game.Players)
+		broadcastGameState(game, c)
 		// If the next player is the bot, have the bot play its turn
 		if game.Players[game.Turn].Name == "bot" {
 			playBotTurn(game, c)
@@ -209,10 +212,21 @@ func playBotTurn(game *Game, c *Clients) {
 	}
 }
 func broadcastGameState(game *Game, c *Clients) {
-	gameState := CreateGameState(*game)
+	// Create the game state once for efficiency
+	gameState := CreateGameState(*game, *c)
+	//c è il map. _ è la chiave, client il valore (ClientInfo). ClientInfo contiene connessione e gameid.
 	for _, client := range c.clients {
+		// Ensure the client is part of the current game
 		if client.GameId == game.Id {
-			err := client.Conn.WriteJSON(gameState) // Simplified for illustration
+			fmt.Printf("Stato della partita %d mandato a client %v:\n", game.Id, client)
+
+			if client.Conn == nil {
+				fmt.Printf("Client %v has a nil connection, skipping.", client)
+				continue
+			}
+
+			// Attempt to write the game state to the client
+			err := client.Conn.WriteJSON(gameState)
 			if err != nil {
 				fmt.Printf("Error broadcasting game state to client %v: %v", client, err)
 			}

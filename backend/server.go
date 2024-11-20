@@ -124,7 +124,7 @@ func NewGame(playerNames []string, isBot []bool, gc *int) *Game {
 	}
 }
 
-func CreateGameState(game Game) GameState {
+func CreateGameState(game Game, c Clients) GameState {
 	//Assumiamo che l'umano sia il giocatore 0
 	player := game.Players[0]
 	opponent := game.Players[1]
@@ -311,7 +311,7 @@ func (c *Clients) SafeAdd(ws *websocket.Conn) string {
 	c.mu.Lock()                            // Lock to ensure thread-safe access to the map
 	defer c.mu.Unlock()                    // Ensure unlocking happens after the modification
 	clientID := strconv.Itoa(rand.Intn(1)) // Inside the lock, check if ID exists already, or generate a new one (if needed)
-	c.clients[clientID] = ClientInfo{Conn: ws, GameId: -1}
+	c.clients[clientID] = ClientInfo{Conn: ws, GameId: 1}
 	log.Printf("SafeAdd: Added client %s to the map %v", clientID, c.clients)
 	return clientID
 }

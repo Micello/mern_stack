@@ -39,15 +39,27 @@ export default function Briscola() {
   const [opponentScore, setOpponentScore] = useState(0);
   const [turn, setTurn] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const clientId = "client1"
+  const playerId = "player1"; // Placeholder for player ID
 
   const [socket, setSocket] = useState(false)
-
+  //Avviato quando il componente Briscola viene renderizzato per la prima volta.
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:8080/ws");
 
     ws.onopen = () => {
       console.log("Briscola.js: Connected to Websocket server!");
       setSocket(ws);
+      const message = {
+        action: "startGame",
+        value: 0, // Assuming `id` is the index/identifier of the card in the hand
+        player: playerId, // Replace with the current player's ID
+        clientId: clientId, // Replace with the WebSocket client ID
+      };
+
+      // Send the message via WebSocket
+      ws.send(JSON.stringify(message));
+
     };
 
 
@@ -56,7 +68,7 @@ export default function Briscola() {
       const data = JSON.parse(event.data);
       console.log("Message from server:", data);
 
-      if (data.type === "update") {
+      if (data.action === "update") {
         setPlayerHand(data.playerHand);
         setBoard(data.board);
         setOpponentHandSize(data.opponentHandSize);
@@ -81,20 +93,23 @@ export default function Briscola() {
     };
   }, []);
 
-  const playCard = (card) => {
-    if (socket) {
-      socket.send(JSON.stringify({ type: "playCard", card }));
-    }
-  };
-
   const handleCardClick = (card) => {
-    if (turn % 2 == 1) { return }
+    if (turn % 2 === 1) { return }
     console.log("card clicked")
     const newHand = playerHand.filter(c => c.id !== card.id); //card è la carta cliccata
     setPlayerHand(newHand);
 
     const newBoard = [{ id: card.id, rank: card.rank, suit: card.suit, location: 2 }, board[1]];
     setBoard(newBoard);
+    const message = {
+      action: "pick_card",
+      value: card.id, // Assuming `id` is the index/identifier of the card in the hand
+      player: playerId, // Replace with the current player's ID
+      clientId: clientId, // Replace with the WebSocket client ID
+    };
+
+    // Send the message via WebSocket
+    socket.send(JSON.stringify(message));
   };
 
   return (
